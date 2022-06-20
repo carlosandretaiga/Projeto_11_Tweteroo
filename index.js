@@ -7,7 +7,6 @@ const server = express();
 server.use(express.json());
 server.use(cors());
 
-//global variables 
 const users = [];
 const tweets = [];
 
@@ -30,7 +29,7 @@ server.post("/tweets", (request, response) => {
   const {username, tweet} = body;
 
   if(!body.tweet) {
-    response.status(400).send("Verifique. todos os campos são obrigatórios!");
+    response.status(400).send("Verifique. Todos os campos são obrigatórios!");
   } else {
     const {avatar} = users.find((user) => user.username === username);
     const newPostTweet = {
@@ -44,14 +43,11 @@ server.post("/tweets", (request, response) => {
 })
 
 server.get("/tweets", (request, response) => {
-
-
 if(tweets.length <= 10) {
   response.status(200).send([...tweets].reverse());
 } else {
   response.status(200).send([...tweets].reverse().splice(0, 10));
 }
-
 
 });
 
