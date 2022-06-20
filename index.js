@@ -11,7 +11,7 @@ server.use(cors());
 const users = [];
 const tweets = [];
 
-server.post('/sign-up', (request, response) => {
+server.post("/sign-up", (request, response) => {
   const {username, avatar} = request.body;
 
   if(!username || !avatar) {
@@ -25,25 +25,33 @@ server.post('/sign-up', (request, response) => {
 
 });
 
-server.get('/tweets', (request, response) => {
-  const page = request.query.page;
+server.post("/tweets", (request, response) => {
+  const body = request.body;
+  const {username, tweet} = body;
 
-  if(Number.isInteger(parseInt(page, 10))) {
-    let numberFilterTweets = 10;
-
-    let min = tweets.length - page * (numberFilterTweets + 1);
-    let max = tweets.length - (page -1) * (numberFilterTweets + 1);
-
-    const pageTweets = tweets.filter((tweet, index) => {
-      return index > min && index <= max;
-    }); 
-
-    const invertedOfTweets = [...pageTweets].reverse();
-
-    response.send(invertedOfTweets);
+  if(!body.tweet) {
+    response.status(400).send("Verifique. todos os campos são obrigatórios!");
   } else {
-    response.status(400).send("Verifique a página!")
+    const {avatar} = users.find((user) => user.username === username);
+    const newPostTweet = {
+      username,
+      avatar,
+      tweet
+    }
+    tweets.push(newPostTweet);
+    response.status(201).send("Ok!");
   }
+})
+
+server.get("/tweets", (request, response) => {
+
+
+if(tweets.length <= 10) {
+  response.status(200).send([...tweets].reverse());
+} else {
+  response.status(200).send([...tweets].reverse().splice(0, 10));
+}
+
 
 });
 
